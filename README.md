@@ -105,25 +105,23 @@ The result is one representative edge per directed airport pair.
 | `weighted_graph_dict` | Adjacency map | Average fare ($) | Cost-minimizing Dijkstra |
 | `layover_graph_dict` | Adjacency map | Average fare + $80 | Layover-aware Dijkstra |
 
-~~~text
-table1a.csv
-      │
-      ▼
-clean columns ──► filter years ──► duplicate reversed routes ──► average by airport pair
-      │
-      ▼
-┌─────────────────────┬──────────────────────────┬─────────────────────────────┐
-│ graph_dict          │ weighted_graph_dict      │ layover_graph_dict          │
-│ (unweighted)        │ (fare weights)           │ (fare + $80 per leg)        │
-└─────────┬───────────┴────────────┬─────────────┴──────────────┬──────────────┘
-          │                        │                            │
-        BFS / DFS              Dijkstra                Modified Dijkstra
-          │                        │                            │
-          └──────────────► 25,000-route benchmark ◄─────────────┘
-                                   │
-                                   ▼
-                     Runtime · Path length · Route cost charts
-~~~
+```mermaid
+flowchart TD
+    A["table1a.csv"] --> B["Clean columns"]
+    B --> C["Filter years (after 2017)"]
+    C --> D["Duplicate reversed routes"]
+    D --> E["Average by airport pair"]
+    E --> F["graph_dict (unweighted)"]
+    E --> G["weighted_graph_dict (fare weights)"]
+    E --> H["layover_graph_dict (fare + $80 per leg)"]
+    F --> I["BFS / DFS"]
+    G --> J["Dijkstra"]
+    H --> K["Modified Dijkstra"]
+    I --> L["25,000-route benchmark"]
+    J --> L
+    K --> L
+    L --> M["Runtime · Path length · Route cost charts"]
+```
 
 ---
 
