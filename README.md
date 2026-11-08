@@ -33,12 +33,12 @@ All four algorithms are evaluated on **25,000 randomly generated airport pairs**
 
 | Metric | Value |
 |---|---|
-| Dataset | U.S. Airline Flight Routes and Fares (Kaggle) |
-| Records analyzed | ~246,000 quarterly route observations (2021 – Q1 2024) |
-| Airports in graph | 176 |
+| Dataset | DOT Consumer Airfare Report — Table 1a (All U.S. Airport Pair Markets) |
+| Records analyzed | ~262,000 quarterly route observations (1993 – Q1 2026) |
+| Airports in graph | 186 |
 | Algorithms implemented | 4 (BFS, DFS, Dijkstra, Modified Dijkstra) |
 | Benchmark trials | 25,000 random routes per algorithm |
-| Languages / tools | Python, pandas, NumPy, Matplotlib, Jupyter/Colab |
+| Languages / tools | Python, pandas, NumPy, Matplotlib, Jupyter |
 | Deliverables | Executable notebook + 25-page technical report |
 
 ---
@@ -72,7 +72,7 @@ The pipeline converts a raw fare dataset into a searchable graph in four stages.
 The raw CSV contains many columns that are irrelevant to routing, such as airline market-share fields and geocoded city identifiers. The notebook:
 
 - Drops unused columns.
-- Filters to records after 2017 (the analyzed slice spans 2021 through Q1 2024).
+- Filters to records after 2017 (the analyzed slice spans 2018 through Q1 2026).
 - Reorders the remaining fields for readability.
 
 The retained schema is:
@@ -110,7 +110,7 @@ The result is one representative edge per directed airport pair.
 | `layover_graph_dict` | Adjacency map | Average fare + $80 | Layover-aware Dijkstra |
 
 ~~~text
-flight_data.csv
+table1a.csv
       │
       ▼
 clean columns ──► filter years ──► duplicate reversed routes ──► average by airport pair
@@ -176,10 +176,10 @@ Every algorithm was run on the **same 25,000 randomly selected origin–destinat
 
 | Algorithm | Mean runtime | Mean flights per route | Mean route fare |
 |---|---:|---:|---:|
-| **DFS** | 1.50 ms | 45.97 | $10,557.98 |
-| **BFS** | 1.80 ms | **2.00** | $440.98 |
-| **Dijkstra** | 1.15 ms | 2.26 | **$333.24** |
-| **Modified Dijkstra** | **1.03 ms** | 2.08 | $339.00 |
+| **DFS** | 1.32 ms | 48.94 | $11,551.95 |
+| **BFS** | **1.27 ms** | **2.06** | $486.24 |
+| **Dijkstra** | 1.51 ms | 2.35 | **$373.69** |
+| **Modified Dijkstra** | 1.32 ms | 2.13 | $380.07 |
 
 > Averages over 25,000 trials. Runtimes are per query.
 
@@ -192,20 +192,20 @@ The graph's largest hubs, by number of outgoing nonstop destinations:
 | Airport | Connections |
 |---|---:|
 | DFW (Dallas/Fort Worth) | 112 |
+| HPN (Westchester County) | 108 |
+| EWR (Newark) | 108 |
+| DAL (Dallas Love Field) | 107 |
+| SNA (Orange County) | 106 |
+| LGA (New York LaGuardia) | 106 |
+| JFK (New York JFK) | 106 |
 | ORD (Chicago O'Hare) | 105 |
-| EWR (Newark) | 105 |
-| DAL (Dallas Love Field) | 105 |
-| SNA (Orange County) | 104 |
-| PHX (Phoenix) | 104 |
-| LGA (New York LaGuardia) | 104 |
-| LAX (Los Angeles) | 104 |
-| JFK (New York JFK) | 104 |
+| BUR (Hollywood Burbank) | 105 |
 
 ---
 
 ## Features
 
-- **End-to-end data pipeline** — from raw Kaggle CSV to a query-ready graph, including cleaning, symmetrization, and route aggregation.
+- **End-to-end data pipeline** — from the raw Table 1a CSV to a query-ready graph, including cleaning, symmetrization, and route aggregation.
 - **Three graph representations** — unweighted adjacency lists plus two weighted adjacency maps for different optimization goals.
 - **Four algorithms written from scratch** — no NetworkX or external graph library; BFS, DFS, and Dijkstra are implemented directly with `deque` and `heapq`.
 - **Layover-aware routing** — a principled, provable modification that trades a small fare increase for significantly fewer stops.
@@ -213,7 +213,7 @@ The graph's largest hubs, by number of outgoing nonstop destinations:
 - **Publication-quality visualizations** — Matplotlib bar charts comparing runtime, path length, and route cost.
 - **Reproducible notebook** — a single, well-commented Jupyter notebook (32 cells) that runs top-to-bottom.
 - **Full technical write-up** — a 25-page report covering mechanisms, pseudocode, proofs, results, and future work.
-- **Colab-ready** — designed to run in Google Colab with a simple file-upload cell.
+- **Runs locally** — loads `table1a.csv` directly from the project directory; no Colab or upload step required.
 
 ---
 
@@ -225,7 +225,7 @@ The graph's largest hubs, by number of outgoing nonstop destinations:
 | Data processing | pandas, NumPy |
 | Graph algorithms | Standard library — `heapq`, `collections.deque`, `random`, `time` |
 | Visualization | Matplotlib |
-| Environment | Jupyter Notebook / Google Colab |
+| Environment | Jupyter Notebook |
 | Documentation | LaTeX-style PDF report |
 
 No third-party graph libraries are used — every traversal and shortest-path routine is implemented explicitly.
@@ -235,7 +235,7 @@ No third-party graph libraries are used — every traversal and shortest-path ro
 ## Project Structure
 
 ~~~text
-MATH-3012-Project/
+Flight-Fare-Optimizer/
 ├── Flight_Optimizer.ipynb     # Main notebook: data pipeline, algorithms, benchmark, charts
 ├── MATH_3012_Report.pdf       # 25-page technical report with methodology and analysis
 ├── README.md                  # Project documentation
@@ -261,32 +261,23 @@ MATH-3012-Project/
 
 ### Prerequisites
 
-- Python 3.9 or newer (or a Google account for Colab)
+- Python 3.9 or newer
 - `pip`
-- The `flight_data.csv` dataset (not bundled with the repository)
+- The `table1a.csv` dataset (not bundled with the repository)
 
 ### Dataset
 
-Download **US Airline Flight Routes and Fares 1993–2024** from Kaggle:
+Download the **DOT Consumer Airfare Report — Table 1a (All U.S. Airport Pair Markets)**:
 
-<https://www.kaggle.com/datasets/bhavikjikadara/us-airline-flight-routes-and-fares-1993-2024>
+<https://datahub.transportation.gov/d/tfrh-tu9e>
 
-Place `flight_data.csv` in the project root or upload it when prompted by the notebook.
+Place `table1a.csv` in the project root. The notebook loads it with `pd.read_csv('table1a.csv')` and converts the formatted currency/mileage columns to numeric.
 
-### Option A — Run in Google Colab (recommended)
-
-1. Open [Flight_Optimizer.ipynb](https://github.com/shawnaks/MATH-3012-Project/blob/main/Flight_Optimizer.ipynb) in Colab.
-2. Select **Runtime → Run all**.
-3. When the upload prompt appears, choose `flight_data.csv`.
-4. The notebook processes the data, runs every algorithm, and renders the benchmark charts.
-
-The notebook imports `google.colab.files`, so it works out of the box in Colab.
-
-### Option B — Run Locally
+### Run Locally
 
 ~~~bash
-git clone https://github.com/shawnaks/MATH-3012-Project.git
-cd MATH-3012-Project
+git clone https://github.com/shawnaks/Flight-Fare-Optimizer.git
+cd Flight-Fare-Optimizer
 
 python -m venv .venv
 
@@ -300,27 +291,16 @@ pip install numpy pandas matplotlib jupyter
 jupyter notebook Flight_Optimizer.ipynb
 ~~~
 
-Because the notebook was authored in Colab, replace the upload cell with a local file read:
-
-~~~python
-# Replace:
-# from google.colab import files
-# uploaded = files.upload()
-
-import pandas as pd
-flight_data = pd.read_csv("flight_data.csv", low_memory=False)
-~~~
-
-Then run the remaining cells in order.
+Then run the cells in order.
 
 ---
 
 ## Key Findings
 
-- **DFS is unsuitable for flight planning.** On a dense graph full of cycles, it produced itineraries averaging **46 flights** and over **$10,500** in fares — routes that could be flown in two or three legs. Its runtime also exceeded Dijkstra's, contradicting naive complexity expectations because it wanders through much of the graph before reaching the goal.
-- **BFS delivers the shortest itineraries.** It guarantees the minimum number of flights and is ideal when time or simplicity matters more than price, such as emergency travel. However, its routes cost about **$102 more** on average than the modified Dijkstra.
-- **Dijkstra finds the cheapest routes.** It produced the lowest mean fare (**$333.24**), making it the right choice for budget-focused travelers who do not mind extra layovers.
-- **Modified Dijkstra is the best general-purpose strategy.** It was the **fastest** algorithm in the benchmark, kept path length within **0.08 flights of BFS**, and saved roughly **$102 per route** versus BFS while costing only **$5.76 more** than pure Dijkstra. In effect, it behaves like a hybrid of BFS and Dijkstra — a realistic model of how travelers actually weigh price against convenience.
+- **DFS is unsuitable for flight planning.** On a dense graph full of cycles, it produced itineraries averaging **49 flights** and over **$11,552** in fares — routes that could be flown in two or three legs, because it wanders depth-first through the graph before reaching the goal.
+- **BFS delivers the shortest itineraries.** It guarantees the minimum number of flights and is ideal when time or simplicity matters more than price, such as emergency travel. However, its routes cost about **$106 more** on average than the modified Dijkstra.
+- **Dijkstra finds the cheapest routes.** It produced the lowest mean fare (**$373.69**), making it the right choice for budget-focused travelers who do not mind extra layovers.
+- **Modified Dijkstra is the best general-purpose strategy.** It kept path length within **0.07 flights of BFS**, and saved roughly **$106 per route** versus BFS while costing only **$6.38 more** than pure Dijkstra. In effect, it behaves like a hybrid of BFS and Dijkstra — a realistic model of how travelers actually weigh price against convenience.
 
 ---
 
@@ -330,7 +310,7 @@ The full analysis — including algorithm pseudocode, correctness discussion, th
 
 1. Miao Bin. *Graph Traversal in Python: Breadth First Search (BFS).* Medium.
 2. Shimon Even. *Graph Algorithms.* Cambridge University Press, 2008, pp. 46–48.
-3. Bhavik Jikadara. *US Airline Flight Routes and Fares 1993–2024.* Kaggle.
+3. U.S. Department of Transportation. *Consumer Airfare Report — Table 1a (All U.S. Airport Pair Markets).* data.transportation.gov.
 4. Kurt Mehlhorn. *Algorithms and Data Structures: The Basic Toolbox.* Springer, 2008, Chap. 10.
 5. Mitchel T. Keller and William T. Trotter. *Applied Combinatorics.* 1986.
 
