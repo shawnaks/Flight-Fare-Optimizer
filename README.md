@@ -335,15 +335,3 @@ The full analysis — including algorithm pseudocode, correctness discussion, th
 5. Mitchel T. Keller and William T. Trotter. *Applied Combinatorics.* 1986.
 
 ---
-
-## Authors
-
-**MATH 3012 — Applied Combinatorics**  
-Georgia Institute of Technology · November 2024
-
-- Shawnak Samaddar
-- Sean Lee
-- David Xibille
-- Riley Jocham
-
----
