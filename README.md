@@ -54,12 +54,8 @@ All four algorithms are evaluated on **25,000 randomly generated airport pairs**
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
-- [Usage](#usage)
 - [Key Findings](#key-findings)
-- [Limitations & Future Work](#limitations--future-work)
 - [Report & References](#report--references)
-- [Authors](#authors)
-- [License](#license)
 
 ---
 
