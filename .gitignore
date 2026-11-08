@@ -128,3 +128,12 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Data files (downloaded separately, not committed to git)
+*.csv
+*.parquet
+*.pkl
+*.pickle
+*.feather
+*.h5
+*.hdf5
